@@ -1,4 +1,10 @@
 package hnqd.project.ApartmentManagement.repository;
 
-public interface IOrderRepo {
+import hnqd.project.ApartmentManagement.entity.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface IOrderRepo extends JpaRepository<Order, Integer> {
+
 }

@@ -1,4 +1,9 @@
 package hnqd.project.ApartmentManagement.service;
 
-public class IOrderSerivce {
+import hnqd.project.ApartmentManagement.entity.Order;
+
+public interface IOrderService {
+
+    void createOrder(Order order);
+
 }

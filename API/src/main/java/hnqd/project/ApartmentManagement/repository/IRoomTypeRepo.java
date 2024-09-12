@@ -1,4 +1,9 @@
 package hnqd.project.ApartmentManagement.repository;
 
-public interface IRoomTypeRepo {
+import hnqd.project.ApartmentManagement.entity.Roomtype;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface IRoomTypeRepo extends JpaRepository<Roomtype, Integer> {
 }
