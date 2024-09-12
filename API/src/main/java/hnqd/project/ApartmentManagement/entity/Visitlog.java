@@ -1,27 +1,65 @@
 package hnqd.project.ApartmentManagement.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-@Data
 @Entity
-@Table(name = "visitlog")
 public class Visitlog {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private Integer id;
-
+    private int id;
+    @Basic
     @Column(name = "entryTime")
-    private LocalDateTime entryTime;
-
+    private Timestamp entryTime;
+    @Basic
     @Column(name = "exitTime")
-    private LocalDateTime exitTime;
+    private Timestamp exitTime;
+    @ManyToOne
+    @JoinColumn(name = "visitorId", referencedColumnName = "id", nullable = false)
+    private Visitor visitorByVisitorId;
+    @ManyToOne
+    @JoinColumn(name = "roomId", referencedColumnName = "id", nullable = false)
+    private Room roomByRoomId;
 
-    @Column(name = "visitorId")
-    private Integer visitorId;
+    public int getId() {
+        return id;
+    }
 
-    @Column(name = "roomId")
-    private Integer roomId;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Timestamp getEntryTime() {
+        return entryTime;
+    }
+
+    public void setEntryTime(Timestamp entryTime) {
+        this.entryTime = entryTime;
+    }
+
+    public Timestamp getExitTime() {
+        return exitTime;
+    }
+
+    public void setExitTime(Timestamp exitTime) {
+        this.exitTime = exitTime;
+    }
+
+    public Visitor getVisitorByVisitorId() {
+        return visitorByVisitorId;
+    }
+
+    public void setVisitorByVisitorId(Visitor visitorByVisitorId) {
+        this.visitorByVisitorId = visitorByVisitorId;
+    }
+
+    public Room getRoomByRoomId() {
+        return roomByRoomId;
+    }
+
+    public void setRoomByRoomId(Room roomByRoomId) {
+        this.roomByRoomId = roomByRoomId;
+    }
 }

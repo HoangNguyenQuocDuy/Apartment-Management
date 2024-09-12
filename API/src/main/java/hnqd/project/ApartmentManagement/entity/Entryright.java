@@ -2,26 +2,30 @@ package hnqd.project.ApartmentManagement.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-@Data
 @Entity
-@Table(name = "entryright")
+@Data
+@Getter
+@Setter
 public class Entryright {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private Integer id;
-
+    private int id;
+    @Basic
     @Column(name = "status")
     private String status;
-
+    @Basic
     @Column(name = "createdAt")
-    private LocalDateTime createdAt;
-
+    private Timestamp createdAt;
+    @Basic
     @Column(name = "updatedAt")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "relativeId")
-    private Integer relativeId;
+    private Timestamp updatedAt;
+    @ManyToOne
+    @JoinColumn(name = "relativeId", referencedColumnName = "id", nullable = false)
+    private Relative relativeByRelativeId;
 }

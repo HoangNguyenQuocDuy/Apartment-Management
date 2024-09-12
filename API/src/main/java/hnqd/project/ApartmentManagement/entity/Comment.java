@@ -1,27 +1,65 @@
 package hnqd.project.ApartmentManagement.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
-@Data
 @Entity
-@Table(name = "comment")
 public class Comment {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private Integer id;
-
+    private int id;
+    @Basic
     @Column(name = "content")
     private String content;
-
+    @Basic
     @Column(name = "createdDate")
-    private LocalDateTime createdDate;
+    private Timestamp createdDate;
+    @ManyToOne
+    @JoinColumn(name = "postId", referencedColumnName = "id", nullable = false)
+    private Post postByPostId;
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
+    private User userByUserId;
 
-    @Column(name = "postId")
-    private Integer postId;
+    public int getId() {
+        return id;
+    }
 
-    @Column(name = "userId")
-    private Integer userId;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Post getPostByPostId() {
+        return postByPostId;
+    }
+
+    public void setPostByPostId(Post postByPostId) {
+        this.postByPostId = postByPostId;
+    }
+
+    public User getUserByUserId() {
+        return userByUserId;
+    }
+
+    public void setUserByUserId(User userByUserId) {
+        this.userByUserId = userByUserId;
+    }
 }
