@@ -1,9 +1,13 @@
 package hnqd.project.ApartmentManagement.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 
+@Setter
+@Getter
 @Entity
 public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,48 +22,9 @@ public class Comment {
     private Timestamp createdDate;
     @ManyToOne
     @JoinColumn(name = "postId", referencedColumnName = "id", nullable = false)
-    private Post postByPostId;
+    private Post post;
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
-    private User userByUserId;
+    private User user;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Timestamp getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Timestamp createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Post getPostByPostId() {
-        return postByPostId;
-    }
-
-    public void setPostByPostId(Post postByPostId) {
-        this.postByPostId = postByPostId;
-    }
-
-    public User getUserByUserId() {
-        return userByUserId;
-    }
-
-    public void setUserByUserId(User userByUserId) {
-        this.userByUserId = userByUserId;
-    }
 }

@@ -1,10 +1,14 @@
 package hnqd.project.ApartmentManagement.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.Collection;
 
+@Setter
+@Getter
 @Entity
 public class Thread {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,49 +21,10 @@ public class Thread {
     @Basic
     @Column(name = "createdDate")
     private Timestamp createdDate;
-    @OneToMany(mappedBy = "threadByThreadId")
-    private Collection<Post> postsById;
+    @OneToMany(mappedBy = "thread")
+    private Collection<Post> posts;
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
-    private User userByUserId;
+    private User user;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Timestamp getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Timestamp createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Collection<Post> getPostsById() {
-        return postsById;
-    }
-
-    public void setPostsById(Collection<Post> postsById) {
-        this.postsById = postsById;
-    }
-
-    public User getUserByUserId() {
-        return userByUserId;
-    }
-
-    public void setUserByUserId(User userByUserId) {
-        this.userByUserId = userByUserId;
-    }
 }

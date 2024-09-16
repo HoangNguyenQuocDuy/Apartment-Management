@@ -6,20 +6,23 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
-@Setter
 @Getter
+@Setter
 @Entity
-public class Feedback {
+public class ParkingRight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "title")
-    private String title;
+    @Column(name = "typeOfVehicle")
+    private String typeOfVehicle;
     @Basic
-    @Column(name = "content")
-    private String content;
+    @Column(name = "licensePlates")
+    private String licensePlates;
+    @Basic
+    @Column(name = "status")
+    private String status;
     @Basic
     @Column(name = "createdAt")
     private Timestamp createdAt;
@@ -27,7 +30,6 @@ public class Feedback {
     @Column(name = "updatedAt")
     private Timestamp updatedAt;
     @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
-    private User user;
-
+    @JoinColumn(name = "relativeId", referencedColumnName = "id", nullable = false)
+    private Relative relative;
 }

@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Data
 @Getter
 @Setter
-public class Entryright {
+public class EntryRight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -27,5 +27,5 @@ public class Entryright {
     private Timestamp updatedAt;
     @ManyToOne
     @JoinColumn(name = "relativeId", referencedColumnName = "id", nullable = false)
-    private Relative relativeByRelativeId;
+    private Relative relative;
 }

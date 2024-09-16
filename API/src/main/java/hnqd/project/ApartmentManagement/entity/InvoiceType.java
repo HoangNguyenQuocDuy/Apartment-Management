@@ -10,19 +10,16 @@ import java.util.Collection;
 @Setter
 @Getter
 @Entity
-public class Locker {
+public class InvoiceType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "status")
-    private String status;
+    @Column(name = "type")
+    private String type;
     @JsonIgnore
-    @OneToMany(mappedBy = "locker")
-    private Collection<Order> orders;
-    @JsonIgnore
-    @OneToMany(mappedBy = "locker")
-    private Collection<User> users;
+    @OneToMany(mappedBy = "invoiceType")
+    private Collection<Invoice> invoices;
 
 }

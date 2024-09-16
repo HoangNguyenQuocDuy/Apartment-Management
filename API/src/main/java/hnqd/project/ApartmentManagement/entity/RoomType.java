@@ -5,29 +5,24 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 @Setter
 @Getter
 @Entity
-public class Visitor {
+public class RoomType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "firstname")
-    private String firstname;
+    @Column(name = "type")
+    private String type;
     @Basic
-    @Column(name = "lastname")
-    private String lastname;
-    @Basic
-    @Column(name = "phoneNumber")
-    private String phoneNumber;
-    @Basic
-    @Column(name = "visitReason")
-    private String visitReason;
+    @Column(name = "price")
+    private BigDecimal price;
     @JsonIgnore
-    @OneToMany(mappedBy = "visitor")
-    private Collection<VisitLog> visitLogs;
+    @OneToMany(mappedBy = "roomType")
+    private Collection<Room> rooms;
 }
