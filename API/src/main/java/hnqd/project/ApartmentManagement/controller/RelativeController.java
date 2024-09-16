@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
-@RestController("/api/relatives")
+@RestController
+@RequestMapping("/api/relatives")
 public class RelativeController {
 
     @Autowired
@@ -25,86 +27,61 @@ public class RelativeController {
     private IUserService userService;
 
     @GetMapping("/")
-    public ResponseEntity<ResponseObject> getRelative(@RequestParam Map<String, String> params) {
+    public ResponseEntity<ResponseObject> getRelatives(@RequestParam Map<String, String> params) {
+        List<Relative> relatives;
+
+        if (params.isEmpty()) {
+            relatives = relativeService.getRelatives();
+        } else {
+            relatives = relativeService.getRelatives(params);
+        }
+
         return ResponseEntity.ok().body(
-                new ResponseObject(HttpStatus.OK.toString(), "", relativeService.getRelatives(params))
+                new ResponseObject(HttpStatus.OK.toString(), "", relatives)
         );
     }
 
-    @PostMapping(path = "/", consumes = {
-            MediaType.APPLICATION_JSON_VALUE,
-            MediaType.MULTIPART_FORM_DATA_VALUE
-    })
-    public ResponseEntity<ResponseObject> createRelative(@RequestPart MultipartFile[] files,
-                                            @RequestParam Map<String, String> params) throws IOException {
-            User user = userService.getUserById(Integer.parseInt(params.get("userId")));
+    @PostMapping("/")
+    public ResponseEntity<ResponseObject> createRelative(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam Map<String, String> params) throws IOException {
 
-            Relative relative = new Relative();
-            relative.setFirstname(params.get("firstname"));
-            relative.setLastname(params.get("lastname"));
-            relative.setType(params.get("type"));
-            relative.setUserByUserId(user);
+        User user = userService.getUserById(Integer.parseInt(params.get("userId")));
 
-            if (files.length > 0) {
-                relative.setFile(files[0]);
-            }
+        Relative relative = new Relative();
+        relative.setFirstname(params.get("firstname"));
+        relative.setLastname(params.get("lastname"));
+        relative.setType(params.get("type"));
+        relative.setUser(user);
 
-            relativeService.createRelative(relative);
+        if (!file.isEmpty()) {
+            relative.setFile(file);
+        }
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(
-                    new ResponseObject(HttpStatus.CREATED.toString(), "Create relative successfully!",
-                            relativeService.getRelatives(params))
-                    );
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ResponseObject(HttpStatus.CREATED.toString(), "Create relative successfully!",
+                        relativeService.createRelative(relative))
+        );
     }
 
     @DeleteMapping("/{relativeId}")
     public ResponseEntity<?> deleteRelative(@PathVariable int relativeId) {
-        try {
-            Relative relative = relativeService.getRelativeById(relativeId);
-            if (relative == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        "Relative not found with ID: " + relativeId);
-            }
+        relativeService.deleteRelative(relativeId);
 
-            relativeService.deleteRelative(relativeId);
-
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ResponseObject(HttpStatus.CREATED.toString(), "Delete relative successfully!", "")
+        );
     }
 
     @PostMapping(path = "/{relativeId}", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     public ResponseEntity<?> updateRelative(@PathVariable("relativeId") int relativeId,
-                                            @RequestPart MultipartFile[] files, @RequestParam Map<String, String> params) {
-        try {
-            Relative relative = relativeService.getRelativeById(relativeId);
-            if (relative == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        "Relative not found with ID: " + relativeId);
-            }
-
-            if (files.length > 0) {
-                relative.setFile(files[0]);
-            }
-            if (params.containsKey("firstname")) {
-                relative.setFirstname(params.get("firstname"));
-            }
-            if (params.containsKey("lastname")) {
-                relative.setLastname(params.get("lastname"));
-            }
-            if (params.containsKey("type")) {
-                relative.setType(params.get("type"));
-            }
-
-            relativeService.createRelative(relative);
-
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    "Update relative successfully!");
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-        }
+                                            @RequestPart MultipartFile file, @RequestParam Map<String, String> params) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject(HttpStatus.OK.toString(), "Update relative successfully!",
+                        relativeService.updateRelative(relativeId, file, params
+                        ))
+        );
     }
 }

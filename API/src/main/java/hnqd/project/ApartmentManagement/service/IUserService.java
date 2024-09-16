@@ -14,6 +14,6 @@ public interface IUserService {
     Optional<User> getUserByUsername(String username);
     User createUser(User user) throws IOException;
     List<User> getUsers();
-    User updateUser(MultipartFile file, Map<String, String> userRequest) throws IOException;
+    User updateUser(Integer userId, MultipartFile file, Map<String, String> userRequest) throws IOException;
     User getUserById(int id) throws CommonException.NotFoundException;
 }

@@ -6,22 +6,22 @@ import hnqd.project.ApartmentManagement.entity.Relative;
 import hnqd.project.ApartmentManagement.exceptions.CommonException;
 import hnqd.project.ApartmentManagement.repository.IRelativeRepo;
 import hnqd.project.ApartmentManagement.service.IRelativeService;
+import hnqd.project.ApartmentManagement.utils.UploadImage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
+import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class RelativeService implements IRelativeService {
 
     @Autowired
     private IRelativeRepo relativeRepo;
-
+    @Autowired
+    private UploadImage uploadImage;
     @Autowired
     private Cloudinary cloudinary;
 
@@ -36,25 +36,59 @@ public class RelativeService implements IRelativeService {
     }
 
     @Override
-    public Relative updateRelative(Relative relative) {
-        return null;
+    public Relative updateRelative(Integer relativeId, MultipartFile file, Map<String, String> params) throws IOException {
+        Relative storedRelative = relativeRepo.findById(relativeId).orElseThrow(
+                () -> new CommonException.NotFoundException("Relative not found with ID: " + relativeId)
+        );
+
+        if (file != null && !file.isEmpty()) {
+            storedRelative.setAvatar(uploadImage.uploadToCloudinary(file));
+        }
+
+        if (params.get("firstname") != null && !params.get("firstname").isEmpty()) {
+            storedRelative.setFirstname(params.get("firstname"));
+        }
+        if (params.get("lastname") != null && !params.get("lastname").isEmpty()) {
+            storedRelative.setLastname(params.get("lastname"));
+        }
+        if (params.get("type") != null && !params.get("type").isEmpty()) {
+            storedRelative.setType(params.get("type"));
+        }
+
+        return relativeRepo.save(storedRelative);
     }
 
     @Override
     public List<Relative> getRelatives(Map<String, String> params) {
+        List<Relative> relatives = new ArrayList<>();
+
+        if (params.get("firstname") != null && !params.get("firstname").isEmpty()) {
+            relatives.addAll(relativeRepo.findAllByFirstnameContaining(params.get("firstname")));
+        }
+        if (params.get("lastname") != null && !params.get("lastname").isEmpty()) {
+            relatives.addAll(relativeRepo.findAllByLastnameContaining(params.get("lastname")));
+        }
+        if (params.get("type") != null && !params.get("type").isEmpty()) {
+            relatives.addAll(relativeRepo.findAllByType(params.get("type")));
+        }
+        if (params.get("userId") != null && !params.get("userId").isEmpty()) {
+            relatives.addAll(relativeRepo.findAllByUserId(Integer.parseInt(params.get("userId"))));
+        }
+
+        return relatives;
+    }
+
+    @Override
+    public List<Relative> getRelatives() {
         return relativeRepo.findAll();
     }
 
     @Override
-    public Relative getRelativeById(int id) throws CommonException.NotFoundException {
-        Optional<Relative> relativeOpt = relativeRepo.findById(id);
-
-        return relativeOpt.orElseThrow(() -> new CommonException.NotFoundException(
-                "Relative not found with ID: " + id));
-    }
-
-    @Override
     public void deleteRelative(int id) {
+        Relative storedRelative = relativeRepo.findById(id).orElseThrow(
+                () -> new CommonException.NotFoundException("Relative not found with ID: " + id)
+        );
+
         relativeRepo.deleteById(id);
     }
 }

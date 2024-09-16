@@ -27,10 +27,11 @@ public class UserController {
             );
     }
 
-    @PutMapping("/")
-    public ResponseEntity<ResponseObject> updateUser(@RequestPart("file")MultipartFile file,
+    @PutMapping("/{userId}")
+    public ResponseEntity<ResponseObject> updateUser(@PathVariable("userId") Integer userId,
+                                                     @RequestPart("file")MultipartFile file,
                                                      @RequestParam Map<String, String> params) throws IOException {
-        User userSave = userService.updateUser(file, params);
+        User userSave = userService.updateUser(userId, file, params);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Update user successfully!", userSave)
