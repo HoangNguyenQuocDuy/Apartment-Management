@@ -20,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -42,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (authenticationHeader != null && authenticationHeader.startsWith("Bearer ")) {
             try {
                 String token = authenticationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
+                Algorithm algorithm = Algorithm.HMAC256(secretKey);
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(token);
                 String username = decodedJWT.getSubject();
