@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -30,8 +31,8 @@ public class RoomController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseObject> getRooms() {
-        List<Room> rooms = roomService.getRooms();
+    public ResponseEntity<ResponseObject> getRooms(@RequestParam Map<String, String> params) {
+        List<Room> rooms = roomService.getRooms(params);
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Get rooms successfully!", rooms)
         );

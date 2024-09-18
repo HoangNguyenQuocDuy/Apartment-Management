@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,6 @@ public class RoomServiceImpl implements IRoomService {
     private IRoomRepo roomRepo;
     @Autowired
     private UploadImage uploadImage;
-
     @Autowired
     private IRoomTypeRepo roomTypeRepo;
 
@@ -41,8 +41,10 @@ public class RoomServiceImpl implements IRoomService {
     }
 
     @Override
-    public List<Room> getRooms() {
-        return roomRepo.findAll();
+    public List<Room> getRooms(Map<String, String> params) {
+        if (params.get("status") != null && !params.get("status").isEmpty()) {
+            return roomRepo.findAllByStatus(params.get("status"));
+        } else return roomRepo.findAll();
     }
 
     @Override

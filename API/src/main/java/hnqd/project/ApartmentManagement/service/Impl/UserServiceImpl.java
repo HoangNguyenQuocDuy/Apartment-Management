@@ -42,16 +42,8 @@ public class UserServiceImpl implements IUserService {
     public User createUser(User user) throws IOException {
         if (user.getId() == null) {
             user.setStatus("New");
-            user.setRoleName("ROLE_CUSTOMER");
+            user.setRoleName("ROLE_RESIDENT");
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-        } else if (user.getStatus().equals("New")) {
-            user.setStatus("Active");
-
-            String storedPassword = userRepo.findById(user.getId()).get().getPassword();
-
-            if (!user.getPassword().equals(storedPassword)) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-            }
         }
 
         if (user.getFile() != null && !user.getFile().isEmpty()) {

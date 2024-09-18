@@ -1,4 +1,9 @@
 package hnqd.project.ApartmentManagement.repository;
 
-public interface IVisitLogRepo {
+import hnqd.project.ApartmentManagement.entity.VisitLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface IVisitLogRepo extends JpaRepository<VisitLog, Integer> {
 }

@@ -32,31 +32,34 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public AuthResponse authenticate(AuthRequest request, HttpServletResponse response) throws CommonException.NotFoundException
             , CommonException.WrongPasswordException {
-            User user = userRepo.findByUsername(request.getUsername()).orElseThrow(()-> new CommonException.NotFoundException("User not found!"));
+        User user = userRepo.findByUsername(request.getUsername()).orElseThrow(() -> new CommonException.NotFoundException("User not found!"));
 
-            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                throw new CommonException.WrongPasswordException("Invalid password!");
-            }
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new CommonException.WrongPasswordException("Invalid password!");
+        }
 
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            String jwtAccessToken = jwtService.generateToken(user);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        String jwtAccessToken = jwtService.generateToken(user);
 
-            response.setHeader("Authentication", "Bearer " + jwtAccessToken);
+        response.setHeader("Authentication", "Bearer " + jwtAccessToken);
 
-            return AuthResponse.builder()
-                    .accessToken(jwtAccessToken)
-                    .userResponse(
-                            UserResponse.builder()
-                                    .username(user.getUsername())
-                                    .email(user.getEmail())
-                                    .phone(user.getPhone())
-                                    .firstName(user.getFirstname())
-                                    .lastName(user.getLastname())
-                                    .status(user.getStatus())
-                                    .roleName(user.getRoleName())
-                                    .resetPasswordCode(user.getResetPasswordCode())
-                                    .build()
-                    )
-                    .build();
+        return AuthResponse.builder()
+                .accessToken(jwtAccessToken)
+                .userResponse(
+                        UserResponse.builder()
+                                .id(user.getId())
+                                .username(user.getUsername())
+                                .email(user.getEmail())
+                                .phone(user.getPhone())
+                                .firstName(user.getFirstname())
+                                .lastName(user.getLastname())
+                                .status(user.getStatus())
+                                .roleName(user.getRoleName())
+                                .resetPasswordCode(user.getResetPasswordCode())
+                                .room(user.getRoom())
+                                .locker(user.getLocker())
+                                .build()
+                )
+                .build();
     }
 }

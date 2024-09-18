@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +49,23 @@ public class InvoiceServiceImpl implements IInvoiceService {
         }
 
         Invoice invoice = new Invoice();
+
+        if (invoiceReq.getDueDate() == null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_MONTH, 5);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 0);
+
+            invoice.setDueDate(new Timestamp(new Date(calendar.getTimeInMillis()).getTime()).toLocalDateTime());
+        } else {
+            invoice.setDueDate(invoiceReq.getDueDate());
+        }
+
         invoice.setDescription(invoiceReq.getDescription());
         invoice.setAmount(invoiceReq.getAmount());
         invoice.setStatus("UnPaid");
-        invoice.setDueDate(invoiceReq.getDueDate());
         invoice.setCreatedAt(new Timestamp(new Date().getTime()));
         invoice.setInvoiceType(invoiceType);
         invoice.setRoom(room);

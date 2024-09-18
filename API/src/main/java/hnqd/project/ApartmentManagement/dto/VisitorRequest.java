@@ -5,10 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class VisitRequest {
+public class VisitorRequest {
     private String firstname;
     private String lastname;
     private String phoneNumber;
     private String visitReason;
-    
 }

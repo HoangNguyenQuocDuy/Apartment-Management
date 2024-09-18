@@ -25,7 +25,7 @@ public class FeedbackController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createFeedback(@RequestBody FeedbackRequest feedbackRequest) {
+    public ResponseEntity<ResponseObject> createFeedback(@RequestBody FeedbackRequest feedbackRequest) {
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(
                 new ResponseObject("OK", "Create feedback successfully!",
                         feedbackService.createFeedback(feedbackRequest))
@@ -33,7 +33,7 @@ public class FeedbackController {
     }
 
     @PutMapping("/{feedbackId}")
-    public ResponseEntity<?> updateFeedback(@RequestBody Map<String, String> data,
+    public ResponseEntity<ResponseObject> updateFeedback(@RequestBody Map<String, String> data,
                                               @PathVariable("feedbackId") int feedbackId) {
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Update feedback successfully!",
@@ -43,7 +43,7 @@ public class FeedbackController {
     }
 
     @DeleteMapping("/{feedbackId}")
-    public ResponseEntity<?> deleteFeedback(@PathVariable("feedbackId") int feedbackId) {
+    public ResponseEntity<ResponseObject> deleteFeedback(@PathVariable("feedbackId") int feedbackId) {
         feedbackService.deleteFeedback(feedbackId);
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Delete feedback successfully!","")

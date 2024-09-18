@@ -1,5 +1,6 @@
 package hnqd.project.ApartmentManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class Thread {
     @Column(name = "createdDate")
     private Timestamp createdDate;
     @OneToMany(mappedBy = "thread")
+    @JsonIgnore
     private Collection<Post> posts;
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)

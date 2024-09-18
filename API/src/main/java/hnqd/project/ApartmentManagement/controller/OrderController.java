@@ -7,6 +7,7 @@ import hnqd.project.ApartmentManagement.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,8 @@ public class OrderController {
 
     @Autowired
     private IOrderService orderService;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @PutMapping("/{orderId}")
     public ResponseEntity<ResponseObject> confirmedOrder(@PathVariable("orderId") int orderId) throws IOException {
@@ -40,6 +43,10 @@ public class OrderController {
                 .build();
 
         Order orderSave = orderService.createOrder(orderRequest);
+
+        messagingTemplate.convertAndSend(
+                String.format("/notification/lockers/%s", orderSave.getLocker().getId()),
+                "You have new order");
 
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Create order successfully!", orderSave)

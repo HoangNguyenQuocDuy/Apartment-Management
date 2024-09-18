@@ -21,15 +21,15 @@ public class ExceptionHandler {
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(CommonException.NotFoundException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(CommonException.NotFoundException ex) {
-        return new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        return new ErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(CommonException.WrongPasswordException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleWrongPasswordException(CommonException.NotFoundException ex) {
-        return new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(CommonException.DuplicatePasswordException.class)
