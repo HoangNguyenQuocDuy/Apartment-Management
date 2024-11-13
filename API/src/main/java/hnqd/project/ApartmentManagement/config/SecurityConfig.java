@@ -51,18 +51,34 @@ public class SecurityConfig {
                     authorize.requestMatchers(HttpMethod.PUT, "/api/visitLogs/**").hasAnyRole("RESIDENT", "ADMIN");
                     authorize.requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("RESIDENT", "ADMIN");
                     authorize.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("RESIDENT", "ADMIN");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/payments/**").hasAnyRole("RESIDENT", "ADMIN");
+                    authorize.requestMatchers(HttpMethod.POST, "/api/payments/**").hasAnyRole("RESIDENT", "ADMIN");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/invoiceTypes/**").hasAnyRole("RESIDENT", "ADMIN");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/invoices/").hasAnyRole("RESIDENT", "ADMIN");
+                    authorize.requestMatchers(HttpMethod.PUT, "/api/invoices/**").hasAnyRole("RESIDENT", "ADMIN");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/chat/rooms/**").hasAnyRole("RESIDENT", "ADMIN");
+
 
                     // ROLE_ADMIN access rules
                     authorize.requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.POST, "/api/rooms/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.DELETE, "/api/lockers/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.POST, "/api/lockers/**").hasRole("ADMIN");
                     authorize.requestMatchers(HttpMethod.POST, "/api/orders/**").hasRole("ADMIN");
                     authorize.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasRole("ADMIN");
-                    authorize.requestMatchers(HttpMethod.POST, "/api/users/**").hasRole("ADMIN");
-//                    authorize.requestMatchers("/orders/**", "/rooms/**", "/lockers/**", "/invoices/**",
+                    authorize.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/stats/revenue").permitAll();
+                    authorize.requestMatchers(HttpMethod.GET, "/api/payments/callback/**").permitAll();
+                    
+
+                    //                    authorize.requestMatchers("/orders/**", "/rooms/**", "/lockers/**", "/invoices/**",
 //                            "/api/entryRights/", "/users/", "/parkingRights").hasRole("ADMIN");
-//                    authorize.requestMatchers(HttpMethod.POST, "/api/users/block/**", "/api/lockers/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.GET, "/api/invoices/paySuccess/**").permitAll();
                     // Permit specific public endpoints
                     authorize.requestMatchers("/api/auth/login", "/api/auth/forgotPassword",
                             "/api/auth/resetPassword", "/ws/**").permitAll();
+
 
                     // All other requests need to be authenticated
                     authorize.anyRequest().authenticated();

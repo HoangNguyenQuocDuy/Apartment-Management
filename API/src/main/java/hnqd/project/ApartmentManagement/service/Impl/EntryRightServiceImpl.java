@@ -7,6 +7,9 @@ import hnqd.project.ApartmentManagement.repository.IEntryRightRepo;
 import hnqd.project.ApartmentManagement.repository.IRelativeRepo;
 import hnqd.project.ApartmentManagement.service.IEntryRightService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -39,22 +42,10 @@ public class EntryRightServiceImpl implements IEntryRightService {
 
     @Override
     public List<EntryRight> getEntryRights(Map<String, String> params) {
-        List<EntryRight> entryRights = new ArrayList<>();
-
-        String status = params.getOrDefault("status", "");
-        int userId = Integer.parseInt(params.getOrDefault("userId", "0"));
-
-        if (!status.isEmpty() && userId != 0) {
-            entryRights.addAll(entryRightRepo.findAllByStatusAndRelativeUserId(status, userId));
-        } else if (status.isEmpty() && userId != 0) {
-            entryRights.addAll(entryRightRepo.findAllByRelativeUserId(userId));
-        } else if (!status.isEmpty()) {
-            entryRights.addAll(entryRightRepo.findAllByStatus(status));
-        } else {
-            entryRights.addAll(entryRightRepo.findAll());
+        if (!params.get("userId").isEmpty()) {
+            return entryRightRepo.findAllByRelativeUserId(Integer.parseInt(params.get("userId")));
         }
-
-        return entryRights;
+        return entryRightRepo.findAll();
     }
 
     @Override
@@ -67,5 +58,17 @@ public class EntryRightServiceImpl implements IEntryRightService {
         entrySave.setStatus(status);
 
         return entryRightRepo.save(entrySave);
+    }
+
+    @Override
+    public Page<EntryRight> getEntryRightsPaging(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
+        String status = params.getOrDefault("status", "");
+        if (!status.isEmpty()) {
+            return entryRightRepo.findAllByStatus(status, pageable);
+        }
+        return entryRightRepo.findAll(pageable);
     }
 }

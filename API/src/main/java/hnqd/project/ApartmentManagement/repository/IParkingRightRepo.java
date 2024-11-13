@@ -1,12 +1,13 @@
 package hnqd.project.ApartmentManagement.repository;
 
 import hnqd.project.ApartmentManagement.entity.ParkingRight;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface IParkingRightRepo extends JpaRepository<ParkingRight, Integer> {
-    List<ParkingRight> findByStatus(String status);
-    List<ParkingRight> findAllByRelativeUserId(int id);
-    List<ParkingRight> findByStatusAndRelativeUserId(String status, int id);
+    Page<ParkingRight> findByStatus(String status, Pageable pageable);
+    List<ParkingRight> findAllByRelativeUserId(int userId);
 }

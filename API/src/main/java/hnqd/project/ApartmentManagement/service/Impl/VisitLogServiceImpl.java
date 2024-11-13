@@ -10,6 +10,9 @@ import hnqd.project.ApartmentManagement.repository.IVisitLogRepo;
 import hnqd.project.ApartmentManagement.repository.IVisitorRepo;
 import hnqd.project.ApartmentManagement.service.IVisitLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -50,8 +53,17 @@ public class VisitLogServiceImpl implements IVisitLogService {
     }
 
     @Override
-    public List<VisitLog> getVisitLogs() {
-        return visitLogRepo.findAll();
+    public Page<VisitLog> getVisitLogs(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
+        int roomId = Integer.parseInt(params.getOrDefault("roomId", "0"));
+
+        if (roomId != 0) {
+            return  visitLogRepo.findAllByRoomId(roomId, pageable);
+        }
+
+        return visitLogRepo.findAll(pageable);
     }
 
     @Override

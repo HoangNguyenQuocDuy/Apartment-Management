@@ -55,4 +55,22 @@ public class ExceptionHandler {
     public ErrorResponse handleRoomHasNotUsedException(CommonException.RoomHasNotUsed ex) {
         return new ErrorResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(CommonException.PermissionDenied.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handlePermissionDeniedException(CommonException.PermissionDenied ex) {
+        return new ErrorResponse(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(CommonException.DueDateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDueDateException(CommonException.DueDateException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(CommonException.DuplicationError.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDuplicationException(CommonException.DuplicationError ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 }

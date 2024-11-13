@@ -2,6 +2,7 @@ package hnqd.project.ApartmentManagement.controller;
 
 import hnqd.project.ApartmentManagement.dto.AuthRequest;
 import hnqd.project.ApartmentManagement.dto.ResponseObject;
+import hnqd.project.ApartmentManagement.service.IUserService;
 import hnqd.project.ApartmentManagement.service.Impl.AuthServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpStatus;
@@ -12,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     private AuthServiceImpl authService;
-
+    @Autowired
+    private IUserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
@@ -33,4 +37,33 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        try {
+            userService.forgotPassword(body.get("email"));
+            return ResponseEntity.status(HttpStatus.SC_OK).body(
+                    new ResponseObject("OK", "Verify token has been sent", "")
+            );
+        } catch(Exception e) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.EXPECTATION_FAILED).body(
+                    new ResponseObject("FAILED", "Failed when execute forgot password!", e.getMessage())
+            );
+        }
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> data) {
+        try {
+            String email = data.get("email");
+            String verificationCode = data.get("verificationCode");
+            String newPassword = data.get("newPassword");
+
+            userService.resetPassword(email, verificationCode, newPassword);
+
+            return ResponseEntity.status(HttpStatus.SC_OK).body("Change password successful");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(
+                    ex.getMessage());
+        }
+    }
 }

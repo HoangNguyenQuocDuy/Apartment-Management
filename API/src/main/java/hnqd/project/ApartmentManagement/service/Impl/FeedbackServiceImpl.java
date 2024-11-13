@@ -8,6 +8,9 @@ import hnqd.project.ApartmentManagement.repository.IFeedbackRepo;
 import hnqd.project.ApartmentManagement.repository.IUserRepo;
 import hnqd.project.ApartmentManagement.service.IFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -23,18 +26,21 @@ public class FeedbackServiceImpl implements IFeedbackService {
     private IUserRepo userRepo;
 
     @Override
-    public List<Feedback> getFeedbacks(Map<String, String> params) {
+    public Page<Feedback> getFeedbacks(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
         int userId = Integer.parseInt(params.getOrDefault("userId", "0"));
         int roomId = Integer.parseInt(params.getOrDefault("roomId", "0"));
 
         if (userId != 0 && roomId != 0) {
-            return feedbackRepo.findAllByUserIdAndUserRoomId(userId, roomId);
+            return feedbackRepo.findAllByUserIdAndUserRoomId(userId, roomId, pageable);
         } else if (userId != 0) {
-            return feedbackRepo.findAllByUserId(userId);
+            return feedbackRepo.findAllByUserId(userId, pageable);
         } else if (roomId != 0) {
-            return feedbackRepo.findAllByUserRoomId(roomId);
+            return feedbackRepo.findAllByUserRoomId(roomId, pageable);
         } else {
-            return feedbackRepo.findAll();
+            return feedbackRepo.findAll(pageable);
         }
     }
 

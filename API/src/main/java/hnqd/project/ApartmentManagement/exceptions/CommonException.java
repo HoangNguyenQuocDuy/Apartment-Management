@@ -36,4 +36,22 @@ public class CommonException{
             super(msg);
         }
     }
+
+    public static class PermissionDenied  extends BaseException {
+        public PermissionDenied(String msg) {
+            super(msg);
+        }
+    }
+
+    public static class DueDateException extends RuntimeException {
+        public DueDateException(String message) {
+            super(message);
+        }
+    }
+
+    public static class DuplicationError extends RuntimeException {
+        public DuplicationError(String message) {
+            super(message);
+        }
+    }
 }

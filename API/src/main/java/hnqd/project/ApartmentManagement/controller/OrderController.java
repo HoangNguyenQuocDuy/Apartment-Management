@@ -25,9 +25,9 @@ public class OrderController {
     private SimpMessagingTemplate messagingTemplate;
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<ResponseObject> confirmedOrder(@PathVariable("orderId") int orderId) throws IOException {
+    public ResponseEntity<ResponseObject> confirmedOrder(@PathVariable("orderId") int orderId) {
         Order orderSave = orderService.updateOrder(orderId);
-        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Update order successfully!", orderSave)
         );
     }
@@ -64,10 +64,15 @@ public class OrderController {
 
     @GetMapping("/")
     public ResponseEntity<ResponseObject> getOrders(@RequestParam() Map<String, String> params) {
-        List<Order> orders = orderService.getOrders(params);
-
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
-                new ResponseObject("OK", "Get orders successfully!", orders)
+                new ResponseObject("OK", "Get orders successfully!", orderService.getOrders(params))
+        );
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<ResponseObject> getListOrder() {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Get orders successfully!", orderService.getListOrder())
         );
     }
 }

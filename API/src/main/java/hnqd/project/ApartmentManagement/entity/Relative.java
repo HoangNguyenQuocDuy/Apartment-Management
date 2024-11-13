@@ -34,7 +34,6 @@ public class Relative {
     @JsonIgnore
     @OneToMany(mappedBy = "relative")
     private Collection<ParkingRight> parkingRights;
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User user;

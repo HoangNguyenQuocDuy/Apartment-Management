@@ -8,6 +8,9 @@ import hnqd.project.ApartmentManagement.repository.IParkingRightRepo;
 import hnqd.project.ApartmentManagement.repository.IRelativeRepo;
 import hnqd.project.ApartmentManagement.service.IParkingRightService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -43,22 +46,10 @@ public class ParkingRightService implements IParkingRightService {
 
     @Override
     public List<ParkingRight> getParkingRights(Map<String, String> params) {
-        List<ParkingRight> parkingRights = new ArrayList<>();
-
-        String status = params.getOrDefault("status", "");
-        int userId = Integer.parseInt(params.getOrDefault("userId", "0"));
-
-        if (!status.isEmpty() && userId != 0) {
-            parkingRights.addAll(parkingRightRepo.findByStatusAndRelativeUserId(status, userId));
-        } else if (status.isEmpty() && userId != 0) {
-            parkingRights.addAll(parkingRightRepo.findAllByRelativeUserId(userId));
-        } else if (!status.isEmpty()) {
-            parkingRights.addAll(parkingRightRepo.findByStatus(status));
-        } else {
-            parkingRights.addAll(parkingRightRepo.findAll());
+        if (!params.get("userId").isEmpty()) {
+            return parkingRightRepo.findAllByRelativeUserId(Integer.parseInt(params.get("userId")));
         }
-
-        return parkingRights;
+        return parkingRightRepo.findAll();
     }
 
     @Override
@@ -80,5 +71,18 @@ public class ParkingRightService implements IParkingRightService {
         storedParkingRight.setUpdatedAt(new Timestamp(new Date().getTime()));
 
         return parkingRightRepo.save(storedParkingRight);
+    }
+
+    @Override
+    public Page<ParkingRight> getParkingRightsPaging(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
+        String status = params.getOrDefault("status", "");
+        if (!status.isEmpty()) {
+            return parkingRightRepo.findByStatus(status, pageable);
+        }
+
+        return parkingRightRepo.findAll(pageable);
     }
 }

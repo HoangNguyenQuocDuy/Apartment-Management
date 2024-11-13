@@ -1,5 +1,6 @@
 package hnqd.project.ApartmentManagement.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,10 @@ public class Payment {
     @Basic
     @Column(name = "createdAt")
     private Timestamp createdAt;
+    @Basic
+    @Nullable
+    @Column(name = "uploadImage")
+    private String uploadImage;
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User user;

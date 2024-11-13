@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -21,5 +23,14 @@ public class UploadImage {
         Map res = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", "quanlychungcu"));
 
         return res.get("secure_url").toString();
+    }
+
+    public List<String> UploadMultipleImageToCloudinary(MultipartFile[] files) throws IOException {
+        List<String> results = new ArrayList<>();
+        for (MultipartFile file : files) {
+            results.add(uploadToCloudinary(file));
+        }
+
+        return results;
     }
 }

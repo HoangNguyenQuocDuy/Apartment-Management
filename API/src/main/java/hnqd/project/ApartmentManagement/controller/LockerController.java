@@ -1,7 +1,6 @@
 package hnqd.project.ApartmentManagement.controller;
 
 import hnqd.project.ApartmentManagement.dto.ResponseObject;
-import hnqd.project.ApartmentManagement.entity.Locker;
 import hnqd.project.ApartmentManagement.service.ILockerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,8 @@ public class LockerController {
         );
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<ResponseObject> deleteLocker(@RequestParam int id) {
+    @DeleteMapping("/{lockerId}")
+    public ResponseEntity<ResponseObject> deleteLocker(@PathVariable("lockerId") int id) {
         lockerService.deleteLocker(id);
         return ResponseEntity.ok().body(
                 new ResponseObject("200", "Delete locker successful!", "")
@@ -38,10 +37,17 @@ public class LockerController {
         );
     }
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<ResponseObject> getLockers(@RequestParam Map<String, String> params) {
         return ResponseEntity.ok().body(
                 new ResponseObject("200", "Get lockers successful!", lockerService.getLockers(params))
+        );
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ResponseObject> getLockersPaging(@RequestParam Map<String, String> params) {
+        return ResponseEntity.ok().body(
+                new ResponseObject("200", "Get lockers Paging successful!", lockerService.getLockersPaging(params))
         );
     }
 }

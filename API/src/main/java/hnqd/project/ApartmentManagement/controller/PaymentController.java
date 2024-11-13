@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -67,8 +69,8 @@ public class PaymentController {
         //Add Params of 2.1.0 Version
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        String callbackUrl = "http://localhost:8080/api/payments/callback"
-                + "/" + req.getParameter("userId") + req.getParameter("invoicerentId");
+        String callbackUrl = "http://localhost:8080/api/invoices/paySuccess/"
+                + req.getParameter("userId") + "/" + req.getParameter("invoicerentId");
         vnp_Params.put("vnp_ReturnUrl", callbackUrl);
 
         List fieldNames = new ArrayList(vnp_Params.keySet());
@@ -139,5 +141,12 @@ public class PaymentController {
     @GetMapping("/list")
     public ResponseEntity<?> getPayments(@RequestParam Map<String, String> params) {
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.getPayments(params));
+    }
+
+    @PostMapping("/manual")
+    public ResponseEntity<?> createPayment(
+            @RequestPart MultipartFile file,
+            @RequestParam Map<String, String> params) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(paymentService.createPaymentManual(file, params));
     }
 }

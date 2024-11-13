@@ -9,6 +9,9 @@ import hnqd.project.ApartmentManagement.repository.IOrderRepo;
 import hnqd.project.ApartmentManagement.service.IOrderService;
 import hnqd.project.ApartmentManagement.utils.UploadImage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -68,20 +71,23 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> getOrders(Map<String, String> params) {
-        List<Order> orders = new ArrayList<>();
+    public Page<Order> getOrders(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
 
         if (params.get("lockerId") != null && !params.get("lockerId").isEmpty()) {
-            orders.addAll(orderRepo.findAllByLockerId(Integer.parseInt(params.get("lockerId"))));
+            return orderRepo.findAllByLockerId(Integer.parseInt(params.get("lockerId")), pageable);
+        } else if (params.get("status") != null && !params.get("status").isEmpty()) {
+            return orderRepo.findAllByStatus(params.get("status"), pageable);
+        } else {
+            return orderRepo.findAll(pageable);
         }
-        if (params.get("status") != null && !params.get("status").isEmpty()) {
-            orders.addAll(orderRepo.findAllByStatus(params.get("status")));
-        }
-        if (params.isEmpty()) {
-            return orderRepo.findAll();
-        }
+    }
 
-        return orders;
+    @Override
+    public List<Order> getListOrder() {
+        return orderRepo.findAll();
     }
 
     @Override

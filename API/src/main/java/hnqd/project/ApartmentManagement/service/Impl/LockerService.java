@@ -7,6 +7,9 @@ import hnqd.project.ApartmentManagement.repository.ILockerRepo;
 import hnqd.project.ApartmentManagement.repository.IUserRepo;
 import hnqd.project.ApartmentManagement.service.ILockerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -58,7 +61,15 @@ public class LockerService implements ILockerService {
 
     @Override
     public void deleteLocker(int id) {
-        lockerRepo.deleteById(id);
+        Locker locker = lockerRepo.findById(id).orElseThrow(() -> (
+                new CommonException.NotFoundException("Locker with id " + id + " not found")
+        ));
+
+        if (locker.getStatus().equals("Blank")) {
+            lockerRepo.delete(locker);
+        } else {
+            throw new CommonException.NotFoundException("Locker with id " + id + " is not blank");
+        }
     }
 
     @Override
@@ -68,6 +79,14 @@ public class LockerService implements ILockerService {
         } else {
             return lockerRepo.findAll();
         }
+    }
+
+    @Override
+    public Page<Locker> getLockersPaging(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
+        return lockerRepo.findAll(pageable);
     }
 
     @Override

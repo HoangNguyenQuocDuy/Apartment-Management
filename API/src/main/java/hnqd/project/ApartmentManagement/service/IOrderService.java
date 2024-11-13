@@ -2,6 +2,7 @@ package hnqd.project.ApartmentManagement.service;
 
 import hnqd.project.ApartmentManagement.dto.OrderRequest;
 import hnqd.project.ApartmentManagement.entity.Order;
+import org.springframework.data.domain.Page;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +14,9 @@ public interface IOrderService {
 
     Order updateOrder(int orderId);
 
-    List<Order> getOrders(Map<String, String> params);
+    Page<Order> getOrders(Map<String, String> params);
+
+    List<Order> getListOrder();
 
     Order getOrderById(int lockerId);
 

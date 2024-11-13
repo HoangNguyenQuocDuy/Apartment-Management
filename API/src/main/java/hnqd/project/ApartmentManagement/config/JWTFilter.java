@@ -40,7 +40,11 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authenticationHeader = request.getHeader(AUTHORIZATION);
-
+        String path = request.getRequestURI();
+//        if (path.startsWith("/api/payments/callback/")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
         if (authenticationHeader != null && authenticationHeader.startsWith("Bearer ")) {
             try {
                 String token = authenticationHeader.substring("Bearer ".length());

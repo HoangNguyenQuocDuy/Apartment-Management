@@ -17,11 +17,19 @@ public class ParkingRightController {
     @Autowired
     private IParkingRightService parkingRightService;
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<ResponseObject> getParkingRights(@RequestParam Map<String, String> params) {
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Get parking rights successfully!",
                         parkingRightService.getParkingRights(params))
+        );
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ResponseObject> getParkingRightsPaging(@RequestParam Map<String, String> params) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Get parking rights successfully!",
+                        parkingRightService.getParkingRightsPaging(params))
         );
     }
 

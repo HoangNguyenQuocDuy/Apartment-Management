@@ -22,7 +22,7 @@ public class RoomController {
     @Autowired
     private IRoomService roomService;
 
-    @PostMapping(value = "/")
+    @PostMapping("/")
     public ResponseEntity<ResponseObject> createRoom(@ModelAttribute RoomRequest roomReq) throws IOException {
         Room roomSave = roomService.createRoom(roomReq);
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(
@@ -30,11 +30,35 @@ public class RoomController {
         );
     }
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<ResponseObject> getRooms(@RequestParam Map<String, String> params) {
         List<Room> rooms = roomService.getRooms(params);
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Get rooms successfully!", rooms)
+        );
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ResponseObject> getRoomsPaging(@RequestParam Map<String, String> params) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Get rooms successfully!", roomService.getRoomsPaging(params))
+        );
+    }
+
+    @PutMapping("/{roomId}")
+    public ResponseEntity<ResponseObject> updateRoom(
+            @PathVariable int roomId,
+            @ModelAttribute RoomRequest roomReq) throws IOException {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Update rooms successfully!", roomService.updateRoom(roomReq, roomId))
+        );
+    }
+
+    @DeleteMapping("/{roomId}")
+    public ResponseEntity<ResponseObject> deleteRoom(@PathVariable Integer roomId) throws IOException {
+        roomService.deleteRoom(roomId);
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Update rooms successfully!", "")
         );
     }
 }

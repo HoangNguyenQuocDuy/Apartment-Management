@@ -20,8 +20,11 @@ public class Thread {
     @Column(name = "title")
     private String title;
     @Basic
-    @Column(name = "createdDate")
-    private Timestamp createdDate;
+    @Column(name = "createdAt")
+    private Timestamp createdAt;
+    @Basic
+    @Column(name = "updatedAt")
+    private Timestamp updatedAt;
     @OneToMany(mappedBy = "thread")
     @JsonIgnore
     private Collection<Post> posts;

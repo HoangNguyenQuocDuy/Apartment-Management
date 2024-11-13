@@ -10,16 +10,17 @@ import hnqd.project.ApartmentManagement.repository.IInvoiceTypeRepo;
 import hnqd.project.ApartmentManagement.repository.IRoomRepo;
 import hnqd.project.ApartmentManagement.service.IInvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,6 +36,9 @@ public class InvoiceServiceImpl implements IInvoiceService {
 
     @Override
     public Invoice createInvoice(InvoiceRequest invoiceReq) {
+        if (Integer.parseInt(invoiceReq.getAmount().toString()) <= 0) {
+            throw new CommonException.RequestBodyInvalid("Amount <= 0!!!");
+        }
         InvoiceType invoiceType = invoiceTypeRepo.findById(invoiceReq.getInvoiceTypeId())
                 .orElseThrow(() -> (
                         new CommonException.NotFoundException("Invoice type not found")
@@ -59,6 +63,8 @@ public class InvoiceServiceImpl implements IInvoiceService {
             calendar.set(Calendar.SECOND, 0);
 
             invoice.setDueDate(new Timestamp(new Date(calendar.getTimeInMillis()).getTime()).toLocalDateTime());
+        } else if (invoiceReq.getDueDate().isBefore(LocalDateTime.now()) || invoiceReq.getDueDate().isEqual(LocalDateTime.now())) {
+            throw new CommonException.DueDateException("Due date cannot be in the past or equal to the current date/time.   ");
         } else {
             invoice.setDueDate(invoiceReq.getDueDate());
         }
@@ -74,27 +80,30 @@ public class InvoiceServiceImpl implements IInvoiceService {
     }
 
     @Override
-    public List<Invoice> getInvoices(Map<String, String> params) {
+    public Page<Invoice> getInvoices(Map<String, String> params) {
+        int page = Integer.parseInt(params.get("page"));
+        int size = Integer.parseInt(params.get("size"));
+        Pageable pageable = PageRequest.of(page, size);
         String status = params.getOrDefault("status", "");
         int roomId = Integer.parseInt(params.getOrDefault("roomId", "0"));
         int invoiceTypeId = Integer.parseInt(params.getOrDefault("invoiceTypeId", "0"));
 
         if (!status.isEmpty() && roomId != 0 && invoiceTypeId != 0) {
-            return invoiceRepo.findAllByStatusAndRoomIdAndInvoiceTypeId(status, roomId, invoiceTypeId);
+            return invoiceRepo.findAllByStatusAndRoomIdAndInvoiceTypeId(status, roomId, invoiceTypeId, pageable);
         } else if (status.isEmpty() && roomId != 0 && invoiceTypeId != 0) {
-            return invoiceRepo.findAllByRoomIdAndInvoiceTypeId(roomId, roomId);
+            return invoiceRepo.findAllByRoomIdAndInvoiceTypeId(roomId, roomId, pageable);
         } else if (status.isEmpty() && roomId == 0 && invoiceTypeId != 0) {
-            return invoiceRepo.findAllByInvoiceTypeId(invoiceTypeId);
+            return invoiceRepo.findAllByInvoiceTypeId(invoiceTypeId, pageable);
         } else if (!status.isEmpty() && roomId == 0 && invoiceTypeId == 0) {
-            return invoiceRepo.findAllByStatus(status);
+            return invoiceRepo.findAllByStatus(status, pageable);
         } else if (status.isEmpty() && roomId != 0) {
-            return invoiceRepo.findAllByRoomId(roomId);
+            return invoiceRepo.findAllByRoomId(roomId, pageable);
         } else if (!status.isEmpty() && roomId != 0) {
-            return invoiceRepo.findAllByStatusAndRoomId(status, roomId);
+            return invoiceRepo.findAllByStatusAndRoomId(status, roomId, pageable);
         } else if (!status.isEmpty()) {
-            return invoiceRepo.findAllByStatusAndInvoiceTypeId(status, invoiceTypeId);
+            return invoiceRepo.findAllByStatusAndInvoiceTypeId(status, invoiceTypeId, pageable);
         } else {
-            return invoiceRepo.findAll();
+            return invoiceRepo.findAll(pageable);
         }
     }
 
@@ -131,5 +140,10 @@ public class InvoiceServiceImpl implements IInvoiceService {
         } else {
             throw new CommonException.RequestBodyInvalid("No keys match with invoice column");
         }
+    }
+
+    @Override
+    public void deleteInvoice(int invoiceId) {
+        invoiceRepo.deleteById(invoiceId);
     }
 }

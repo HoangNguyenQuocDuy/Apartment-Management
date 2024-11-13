@@ -20,7 +20,7 @@ public class UserController {
     private IUserService userService;
 
     @PostMapping("/")
-    public ResponseEntity<ResponseObject> createUser(@RequestBody User u) throws IOException {
+    public ResponseEntity<ResponseObject> createUser(@RequestBody UserRequest u) throws IOException {
             User userSave = userService.createUser(u);
             return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(
                     new ResponseObject("OK", "Create user successfully!", userSave)
@@ -35,6 +35,28 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Update user successfully!", userSave)
+        );
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ResponseObject> getListUser(@RequestParam Map<String, String> params) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Get list user successfully!", userService.getUsers(params))
+        );
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseObject> getUserById(@PathVariable int userId) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Get user by Id successfully!", userService.getUserById(userId))
+        );
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ResponseObject> deleteUser(@PathVariable("userId") Integer userId) {
+        userService.deleteUserById(userId);
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Delete this user successfully!", "")
         );
     }
 }

@@ -16,7 +16,7 @@ public class EntryRightController {
     @Autowired
     private IEntryRightService entryRightService;
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<ResponseObject> getEntryRights(@RequestParam Map<String, String> params) {
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Get entry rights successfully!",
@@ -24,20 +24,28 @@ public class EntryRightController {
         );
     }
 
+    @GetMapping("/")
+    public ResponseEntity<ResponseObject> getEntryRightsPaging(@RequestParam Map<String, String> params) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
+                new ResponseObject("OK", "Get entry rights successfully!",
+                        entryRightService.getEntryRightsPaging(params))
+        );
+    }
+
     @PostMapping("/")
-    public ResponseEntity<?> createEntryRight(@RequestBody int relativeId) {
+    public ResponseEntity<?> createEntryRight(@RequestBody Map<String, Integer> body) {
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(
                 new ResponseObject("OK", "Create entry rights successfully!",
-                        entryRightService.createEntryRight(relativeId))
+                        entryRightService.createEntryRight(body.get("relativeId")))
         );
     }
 
     @PutMapping("/{eId}")
-    public ResponseEntity<?> updateEntryRight(@RequestBody String status,
+    public ResponseEntity<?> updateEntryRight(@RequestBody Map<String, String> params,
                                                 @PathVariable("eId") int pId) {
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Update entry right successfully!",
-                        entryRightService.updateEntryRight(pId, status)
+                        entryRightService.updateEntryRight(pId, params.get("status"))
                 )
         );
     }

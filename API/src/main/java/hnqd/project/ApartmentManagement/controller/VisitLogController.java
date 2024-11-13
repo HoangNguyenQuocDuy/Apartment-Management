@@ -59,12 +59,12 @@ public class VisitLogController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseObject> updateVisitLog(
+    public ResponseEntity<ResponseObject> getVisitLogs(
             @RequestParam Map<String, String> params
     ) {
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(
                 new ResponseObject("OK", "Get visit's logs successfully!",
-                        visitLogService.getVisitLogs())
+                        visitLogService.getVisitLogs(params))
         );
     }
 }
